@@ -13,9 +13,6 @@ sudo apt-get install -y libqt4-dev
 sudo apt-get install -y libatlas-base-dev gfortran libeigen3-dev
 sudo apt-get install -y python2.7-dev python3-dev python-numpy python3-numpy
 
-
-mkdir opencv
-d opencv
 wget -O opencv.zip https://github.com/opencv/opencv/archive/4.0.1.zip
 unzip opencv.zip
 
