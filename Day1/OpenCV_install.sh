@@ -1,6 +1,4 @@
 pkg-config --modversion opencv
-sudo apt-get -y purge libopencv* python-opencv
-sudo apt-get -y autoremove
 
 sudo apt-get -y update
 sudo apt-get -y upgrade
