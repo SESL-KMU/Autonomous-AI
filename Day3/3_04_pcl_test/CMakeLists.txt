@@ -1,8 +1,6 @@
 #최소 요구 버젼 
 CMAKE_MINIMUM_REQUIRED (VERSION 2.8 FATAL_ERROR) 
 
-set(PCL_DIR "/home/user/pcl/release/")
-set(PCL_INCLUDE_DIRS "/usr/include/pcl-1.7")
 # 패키지 이름 
 PROJECT (PCL_TEST)          
 MESSAGE (STATUS ${CMAKE_PROJECT_NAME}) #( [<Type>] <메시지> )  
