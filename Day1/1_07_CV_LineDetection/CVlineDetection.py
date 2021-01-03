@@ -10,7 +10,7 @@ import os, sys
 
 input_type = 'video' #'video' # 'image'
 
-cap = cv2.VideoCapture('./test_images/0015_fps_20.mp4')
+cap = cv2.VideoCapture('./test_images/0531_fps_20.mp4')
 fit_result, l_fit_result, r_fit_result, L_lane, R_lane = [], [], [], [], []
 
 # Define the codec and create VideoWriter object
@@ -271,7 +271,7 @@ def detect_lanes_img(img):
         right_fit_line = smoothing(R_lane, 10)
     final = draw_fitline(img, left_fit_line, right_fit_line)
 
-    return final
+    return final, left_fit_line, right_fit_line
 
 if __name__ == '__main__':
     if input_type == 'image':
@@ -287,10 +287,12 @@ if __name__ == '__main__':
         while (cap.isOpened()):
             ret, frame = cap.read()
             if ret:
-                # frame = cv2.resize(frame, (1280, 720))
-                # if frame.shape[0] != 540:  # resizing for challenge video
-                #     frame = cv2.resize(frame, None, fx=3 / 4, fy=3 / 4, interpolation=cv2.INTER_AREA)
-                result = detect_lanes_img(frame)
+                # result, left, right = detect_lanes_img(frame)
+                try:
+                    result, left, right = detect_lanes_img(frame)
+                    cv2.imshow('result', result)
+                except:
+                    continue
 
                 cv2.imshow('result', result)
 
