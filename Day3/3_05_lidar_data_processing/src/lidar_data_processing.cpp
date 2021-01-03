@@ -1,5 +1,5 @@
-# include <iostream>
-# include <string>
+#include <iostream>
+#include <string>
 #include <stdio.h>
 
 #include <ros/ros.h>
@@ -31,11 +31,11 @@ typedef pcl::PointCloud<pcl::PointXYZ> PointCloud;
 using namespace std;
 int j = 0;
 
-PointCloud::Ptr Message (pcl::PointCloud<pcl::PointXYZ>::Ptr);
-pcl::PointCloud<pcl::PointXYZ>::Ptr RoI_Filtering (pcl::PointCloud<pcl::PointXYZ>::Ptr);
-pcl::PointCloud<pcl::PointXYZ>::Ptr RANSAC (pcl::PointCloud<pcl::PointXYZ>::Ptr);
-pcl::PointCloud<pcl::PointXYZI> Clustering(pcl::PointCloud<pcl::PointXYZ>::Ptr);
-visualization_msgs::Marker Box(pcl::PointCloud<pcl::PointXYZ>::Ptr);
+PointCloud::Ptr Message (PointCloud::Ptr);
+PointCloud::Ptr RoI_Filtering (PointCloud::Ptr);
+PointCloud::Ptr RANSAC (PointCloud::Ptr);
+pcl::PointCloud<pcl::PointXYZI> Clustering(PointCloud::Ptr);
+visualization_msgs::Marker Box(PointCloud::Ptr);
 visualization_msgs::MarkerArray msg_marker;
 
 
@@ -60,41 +60,28 @@ int main(int argc, char** argv){
 
 		PointCloud::Ptr msg (new PointCloud);			//rviz에 전달되는 메세지 초기화
 		PointCloud::Ptr msg_filter (new PointCloud);  		//rviz에 전달되는 filter 메세지 초기화
-		PointCloud::Ptr msg_RANSAC (new PointCloud);  		//rviz에 전달되는 RANSAC 메세지 초기화
+		PointCloud::Ptr msg_RANSAC (new PointCloud);  	//rviz에 전달되는 RANSAC 메세지 초기화
 		PointCloud::Ptr msg_ec (new PointCloud);  		//rviz에 전달되는 EC 메세지 초기화
 
-		pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);  		// 원본 클라우드 데이터
-		pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filter (new pcl::PointCloud<pcl::PointXYZ>);  	// ROI 적용 클라우드 데이터
-		pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_RANSAC (new pcl::PointCloud<pcl::PointXYZ>);  	//지면 제거 클라우드 데이터
+		PointCloud::Ptr cloud (new PointCloud);  		// 원본 클라우드 데이터
+		PointCloud::Ptr cloud_filter (new PointCloud);  		// ROI 적용 클라우드 데이터
+		PointCloud::Ptr cloud_RANSAC (new PointCloud);  	//지면 제거 클라우드 데이터
 		pcl::PointCloud<pcl::PointXYZI> cloud_ec;  		//군집화 클라우드 데이터
 
-		sprintf(PcdFileName,"/home/user/catkin_ws/src/lidar_data_processing/Data_pcd/pcd_%d.pcd",j++);
-		pcl::io::loadPCDFile<pcl::PointXYZ> (PcdFileName, *cloud);  //pcd파일이 변경될 때마다 새로운 cloud 생성
-		cout<<j<<endl;
+/********************************************main********************************************/
 
-		cloud_filter = RoI_Filtering(cloud);
-		cloud_RANSAC = RANSAC(cloud_filter);
-		cloud_ec = Clustering(cloud_RANSAC);
-		
-		msg = Message(cloud);				//원본 클라우드 데이터 msg
-		msg_filter = Message(cloud_filter);		//필터링 결과 클라우드 데이터 msg
-		msg_RANSAC = Message(cloud_RANSAC);		//RANSAC 알고리즘 결과 클라우드 데이터 msg
 
-		pcl::PCLPointCloud2 cloud_p;
-		pcl::toPCLPointCloud2(cloud_ec, cloud_p);
-		sensor_msgs::PointCloud2 output;
-		pcl_conversions::fromPCL(cloud_p, output);
-		output.header.frame_id = "map";			//Clustering 결과 msg (ROS Message Type으로 변환)
 
-		pub.publish (msg);
-		pub_filter.publish (msg_filter);
-		pub_RANSAC.publish (msg_RANSAC);
-		pub_ec.publish (output);
-		pub_marker.publish(msg_marker);			//각 msg publish
-		
+
+
+
+
+/********************************************************************************************/
+
+
+
 		ros::spinOnce ();
 		loop_rate.sleep ();
-		//cloud_ec.empty();
 		
 		if (j>432) j=0;
 
@@ -105,7 +92,7 @@ int main(int argc, char** argv){
 
 /*********************************************************Message*********************************************************/
 
-PointCloud::Ptr Message (pcl::PointCloud<pcl::PointXYZ>::Ptr cloud){
+PointCloud::Ptr Message (PointCloud::Ptr cloud){
 
 	double x_cloud; double y_cloud; double z_cloud;  	//포인트 클라우드 데이터 시각화를 위한 변수 선언
 	PointCloud::Ptr msg (new PointCloud);			//메세지 초기화
@@ -126,10 +113,10 @@ PointCloud::Ptr Message (pcl::PointCloud<pcl::PointXYZ>::Ptr cloud){
 
 /******************************************************RoI Filtering******************************************************/
 
-pcl::PointCloud<pcl::PointXYZ>::Ptr RoI_Filtering(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud){
+PointCloud::Ptr RoI_Filtering(PointCloud::Ptr cloud){
 
 	pcl::PassThrough<pcl::PointXYZ> pass;  		//ROI 적용을 위한 객체 생성
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filter (new pcl::PointCloud<pcl::PointXYZ>);  	// ROI 적용 클라우드 데이터
+	PointCloud::Ptr cloud_filter (new PointCloud);  	// ROI 적용 클라우드 데이터
 
 	pass.setInputCloud (cloud);		//입력 
 	pass.setFilterFieldName ("z");		//적용할 좌표 축
@@ -152,11 +139,11 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr RoI_Filtering(pcl::PointCloud<pcl::PointXYZ>
 
 /******************************************************RANSAC Algorithm******************************************************/
 
-pcl::PointCloud<pcl::PointXYZ>::Ptr RANSAC(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud){
+PointCloud::Ptr RANSAC(PointCloud::Ptr cloud){
 
 	pcl::SACSegmentation<pcl::PointXYZ> seg;  							//RANSAC 적용을 위한 객체 생성
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_inliner (new pcl::PointCloud<pcl::PointXYZ>);  	//지면 정보 클라우드 데이터
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_inliner_neg (new pcl::PointCloud<pcl::PointXYZ>);  	//지면 제거 클라우드 데이터
+	PointCloud::Ptr cloud_inliner (new PointCloud);  	//지면 정보 클라우드 데이터
+	PointCloud::Ptr cloud_inliner_neg (new PointCloud);  	//지면 제거 클라우드 데이터
 	pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients ());
 	pcl::PointIndices::Ptr inliers (new pcl::PointIndices ());					// Object for storing the plane model coefficients.
 
@@ -184,7 +171,7 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr RANSAC(pcl::PointCloud<pcl::PointXYZ>::Ptr c
 
 /******************************************************Clustering******************************************************/
 
-pcl::PointCloud<pcl::PointXYZI> Clustering(pcl::PointCloud<pcl::PointXYZ>::Ptr cloud){
+pcl::PointCloud<pcl::PointXYZI> Clustering(PointCloud::Ptr cloud){
 	// 탐색을 위한 KdTree 오브젝트 생성 //Creating the KdTree object for the search method of the extraction
 	pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ>);
 	tree->setInputCloud (cloud);  //KdTree 생성 
@@ -206,8 +193,8 @@ pcl::PointCloud<pcl::PointXYZI> Clustering(pcl::PointCloud<pcl::PointXYZ>::Ptr c
 
 	for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin(); it != cluster_indices.end(); ++it){
 		
-		pcl::PointCloud<pcl::PointXYZ>::Ptr box_points (new pcl::PointCloud<pcl::PointXYZ>);
-		visualization_msgs::Marker box_marker;
+		PointCloud::Ptr box_points (new PointCloud);
+
 		
 		for (std::vector<int>::const_iterator pit = it->indices.begin(); pit != it->indices.end(); ++pit){
 
@@ -216,13 +203,8 @@ pcl::PointCloud<pcl::PointXYZI> Clustering(pcl::PointCloud<pcl::PointXYZ>::Ptr c
 			pt2.x = pt.x, pt2.y = pt.y, pt2.z = pt.z;
 			pt2.intensity = (float)(k + 1);
 
-			box_points->points.push_back(pcl::PointXYZ(pt2.x, pt2.y, pt2.z));
 			TotalCloud.push_back(pt2);
 		      }
-
-		box_marker = Box(box_points);
-		box_marker.id = k;
-		msg_marker.markers.push_back(box_marker);
 		
 		k++;
 	}
@@ -233,7 +215,7 @@ pcl::PointCloud<pcl::PointXYZI> Clustering(pcl::PointCloud<pcl::PointXYZ>::Ptr c
 
 /******************************************************Detection Box******************************************************/
 
-visualization_msgs::Marker Box(pcl::PointCloud<pcl::PointXYZ>::Ptr box_points){
+visualization_msgs::Marker Box(PointCloud::Ptr box_points){
 	pcl::MomentOfInertiaEstimation<pcl::PointXYZ> feature_extractor;
 	//feature_extractor.setInputCloud(convert_xyz);
 	feature_extractor.setInputCloud(box_points);
