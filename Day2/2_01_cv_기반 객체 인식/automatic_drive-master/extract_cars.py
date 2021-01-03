@@ -6,7 +6,6 @@ import glob
 from sklearn.svm import LinearSVC
 import time
 import pickle
-# 数据前处理时用到
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.utils import shuffle
@@ -14,13 +13,10 @@ from scipy.ndimage.measurements import label
 # from moviepy.editor import VideoFileClip
 
 
-# 高斯滤波核大小
 blur_ksize = 5
-# Canny 边缘检测的 min、max 阈值
 canny_min = 50
-canny_max = 150
+xcanny_max = 150
 
-# 霍夫变换参数
 rho = 1
 theta = np.pi / 180
 threshold = 15
@@ -28,23 +24,17 @@ min_line_len = 40
 max_line_gap = 20
 
 
-# 图像处理
 def process_an_image(image):
-    # 1、灰度化/高斯滤波/Canny 边缘检测
     image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     image_blur = cv2.GaussianBlur(image_gray, (blur_ksize, blur_ksize), 1)
     edges = cv2.Canny(image_blur, canny_min, canny_max)
 
-    # 2、标记四个坐标点用于 ROI 截取
-    # 定义 mask 的四个点
     points = np.array([[(200, 500), (420, 350), (590, 350), (800, 500)]])
     roi_edges = roi_mask(edges, points)
 
-    # 3、霍夫直线提取
     drawing, lines = hough_lines(roi_edges, rho, theta, threshold, min_line_len, max_line_gap)
     draw_lines(image, lines)
 
-    # 4、车道拟合计算
     draw_lanes(drawing, lines)
 
     result = cv2.addWeighted(image, 0.9, drawing, 0.2, 0)
@@ -53,7 +43,6 @@ def process_an_image(image):
 
 
 def draw_lanes(image, lines):
-    # 划分左右车道
     left_lines, right_lines = [], []
     for line in lines:
         for x1, y1, x2, y2 in line:
@@ -65,11 +54,9 @@ def draw_lanes(image, lines):
     if len(left_lines) <= 0 or len(right_lines) <= 0:
         return
 
-    # 清理异常数据
     clean_lines(left_lines, 0.1)
     clean_lines(right_lines, 0.1)
 
-    # 得到左右车道线点的集合，拟合直线
     left_points = [(x1, y1) for line in left_lines for x1, y1, x2, y2 in line]
     left_points = left_points + [(x2, y2) for line in left_lines for x1, y1, x2, y2 in line]
     right_points = [(x1, y1) for line in right_lines for x1, y1, x2, y2 in line]
@@ -78,14 +65,11 @@ def draw_lanes(image, lines):
     left_results = least_squares_fit(left_points, 325, image.shape[0])
     right_results = least_squares_fit(right_points, 325, image.shape[0])
 
-    # 注意这里点的顺序
     vtxs = np.array([[left_results[1], left_results[0], right_results[0], right_results[1]]])
 
-    # 填充车道区域
     cv2.fillPoly(image, vtxs, (0, 255, 0))
 
 
-# 迭代计算斜率均值，排除掉与差值差异较大的数据
 def clean_lines(lines, threshold_):
     slope = [(y2 - y1) / (x2 - x1) for line in lines for x1, y1, x2, y2 in line]
     while len(lines) > 0:
@@ -99,15 +83,12 @@ def clean_lines(lines, threshold_):
             break
 
 
-# 最小二乘法拟合
 def least_squares_fit(point_list, ymin, ymax):
-    # 最小二乘法拟合
     x = [p[0] for p in point_list]
     y_ = [p[1] for p in point_list]
 
-    # polyfit第三个参数为拟合多项式的阶数，所以1代表线性
     fit = np.polyfit(y_, x, 1)
-    fit_fn = np.poly1d(fit)  # 获取拟合的结果
+    fit_fn = np.poly1d(fit)
 
     xmin = int(fit_fn(ymin))
     xmax = int(fit_fn(ymax))
@@ -116,10 +97,8 @@ def least_squares_fit(point_list, ymin, ymax):
 
 
 def hough_lines(image_gray, rho_, theta_, thresh, min_line_len_, max_line_gap_):
-    # 统计概率霍夫直线变换
     lines = cv2.HoughLinesP(image_gray, rho_, theta_, thresh, minLineLength=min_line_len_, maxLineGap=max_line_gap_)
 
-    # 新建白画布一张
     drawing = np.ones((image_gray.shape[0], image_gray.shape[1], 3), dtype=np.uint8)
     return drawing, lines
 
@@ -131,14 +110,12 @@ def draw_lines(image_bgr, lines):
 
 
 def roi_mask(image, corner_points):
-    # 创建掩模
     mask = np.zeros_like(image)
     cv2.fillPoly(mask, corner_points, 255)
     img_masked = cv2.bitwise_and(image, mask)
     return img_masked
 
 
-# 显示图像函数
 def ShowImage(name_of_image, image_, rate):
     img_min = cv2.resize(image_, None, fx=rate, fy=rate, interpolation=cv2.INTER_CUBIC)
     cv2.namedWindow(name_of_image, cv2.WINDOW_NORMAL)
@@ -152,17 +129,15 @@ def ShowImage(name_of_image, image_, rate):
         cv2.destroyAllWindows()
 
 
-# 1.图像特征提取, 이미지 특징 추출
-# ① 得到 hog 特征 hog 특징을 얻는다.
+# 이미지 특징 추출
+# hog 특징을 얻는다.
 def get_hog_features(img, orient_, pix_per__cell, cell_per__block, vis=False, feature_vec=True):
-    # 可视化
     if vis:
         features, hog_image = hog(img, orientations=orient_,
                                   pixels_per_cell=(pix_per__cell, pix_per__cell),
                                   cells_per_block=(cell_per__block, cell_per__block),
                                   transform_sqrt=True, visualize=vis, feature_vector=feature_vec)
         return features, hog_image
-    # 不可视化
     else:
         features = hog(img, orientations=orient_,
                        pixels_per_cell=(pix_per__cell, pix_per__cell),
@@ -171,7 +146,7 @@ def get_hog_features(img, orient_, pix_per__cell, cell_per__block, vis=False, fe
         return features
 
 
-# ② 原始像素信息特征 오지리널 픽셀 정보 특징
+# 오지리널 픽셀 정보 특징
 def bin_spatial(img, size=(32, 32)):
     color1 = cv2.resize(img[:, :, 0], size).ravel()
     color2 = cv2.resize(img[:, :, 1], size).ravel()
@@ -179,7 +154,7 @@ def bin_spatial(img, size=(32, 32)):
     return np.hstack((color1, color2, color3))
 
 
-# ③ 计算颜色直方图 hist 特征 컬러 히스토그램의 hist 기능 계산
+# 컬러 히스토그램의 hist 기능 계산
 def color_hist(img, nbins=32, bins_range=(0, 256)):
     # Compute the histogram of the color channels separately
     channel1_hist = np.histogram(img[:, :, 0], bins=nbins, range=bins_range)
@@ -191,7 +166,7 @@ def color_hist(img, nbins=32, bins_range=(0, 256)):
     return hist_features
 
 
-# ④ 整合特征提取 통합 기능 추출
+# 통합 기능 추출
 def extract_features(imgs, color__space='RGB', spatial__size=(32, 32),
                      hist__bins=32, orient_=9,
                      pix_per__cell=8, cell_per__block=2, hog__channel=0,
@@ -245,7 +220,7 @@ def extract_features(imgs, color__space='RGB', spatial__size=(32, 32),
     return features
 
 
-# ⑤ 返回单张图片的 1 行特征样本 단일 사진의 1 행 특징 샘플 반환
+# 단일 사진의 1 행 특징 샘플 반환
 def single_img_features(img, color__space='RGB', spatial__size=(32, 32),
                         hist__bins=32, hist__range=(0, 256), orient_=9,
                         pix_per__cell=8, cell_per__block=2, hog__channel=0,
@@ -295,8 +270,7 @@ def single_img_features(img, color__space='RGB', spatial__size=(32, 32),
     return np.concatenate(img_features)
 
 
-# 2.窗口分割 창 분할
-# ① 将图像分割为小图 이미지를 작은 이미지로 분할
+# 이미지를 작은 이미지로 분할
 def slide_window(img, x_start_stop=None, y__start_stop=None, xy_window=(256, 256), xy_overlap=(0.6, 0.6)):
     # If x and/or y start/stop positions not defined, set to image size
     if y__start_stop is None:
@@ -342,7 +316,7 @@ def slide_window(img, x_start_stop=None, y__start_stop=None, xy_window=(256, 256
     return window_list
 
 
-# ② 近大远小选择框 크고 먼 근처의 작은 선택 상자
+# 크고 먼 근처의 작은 선택 상자
 def choose_window_size(img, x_start_stop=None, y_start__stop=None, overlap=(0.8, 0.8)):
     if y_start__stop is None:
         y_start__stop = [None, None]
@@ -370,7 +344,7 @@ def choose_window_size(img, x_start_stop=None, y_start__stop=None, overlap=(0.8,
     return window_list[0] + window_list[1] + window_list[2] + window_list[3]
 
 
-# ③ 查找小图中的车辆 작은 그림에서 차량 찾기
+# 작은 그림에서 차량 찾기
 def search_windows(img, windows_list, clf, scaler, color__space='RGB', spatial__size=(32, 32), hist__bins=32,
                    hist__range=(0, 256), orient_=9,
                    pix_per__cell=8, cell_per__block=2,
@@ -401,7 +375,7 @@ def search_windows(img, windows_list, clf, scaler, color__space='RGB', spatial__
     return on_windows
 
 
-# ④ 给车画框 자동차 프레임
+# 자동차 프레임
 
 def draw_boxes(img, bboxes, color=(0, 0, 255), thick=6):
     # Make a copy of the image
@@ -414,7 +388,7 @@ def draw_boxes(img, bboxes, color=(0, 0, 255), thick=6):
     return imcopy
 
 
-# 颜色转换 색상 변환
+# 색상 변환
 def convert_color(img, conv='RGB2YCrCb'):
     if conv == 'RGB2YCrCb':
         return cv2.cvtColor(img, cv2.COLOR_RGB2YCrCb)
@@ -424,22 +398,17 @@ def convert_color(img, conv='RGB2YCrCb'):
         return cv2.cvtColor(img, cv2.COLOR_RGB2LUV)
 
 
-# 热度图
 def add_heat(heatmap, bbox_list):
     for box_item in bbox_list:
-        # 每出现一个框，热度图加1
         heatmap[box_item[0][1]:box_item[1][1], box_item[0][0]:box_item[1][0]] += 1
     return heatmap
 
 
 def apply_threshold(heatmap, threshold_):
-    # 小于阈值的热度图置0
     heatmap[heatmap < threshold_] = 0
-    # 返回热度图
     return heatmap
 
 
-# 画框
 def draw_labeled_bboxes(img, labels_):
     for car_number in range(1, labels_[1] + 1):
         nonzero = (labels_[0] == car_number).nonzero()
@@ -457,14 +426,13 @@ def draw_labeled_windows(image, boxes, threshold_=2):
     heat = add_heat(heat, boxes)
     heat = apply_threshold(heat, threshold_)
     heatmap = np.clip(heat, 0, 255)
-    # 给剩下的热图打标签，相当于统计车的数量
     labels_ = label(heatmap)
     draw_img = draw_labeled_bboxes(np.copy(image), labels_)
     return heatmap, labels_, draw_img
 
 
 # Main Code
-# 读取训练图片的位置与文件名 훈련 이미지의 위치와 파일 이름을 읽습니다.
+# 훈련 이미지의 위치와 파일 이름을 읽습니다.
 car_filename = glob.glob('vehicles/*/*.png')
 num_car_image = len(car_filename)
 not_car_filename = glob.glob('non-vehicles/*/*.png')
@@ -474,7 +442,6 @@ print('# car images:', num_car_image, '\n# non-car images:', num_not_car_image)
 cars = car_filename
 notcars = not_car_filename
 
-# 宏定义
 color_space = 'YCrCb'   # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
 orient = 9  # HOG orientations
 pix_per_cell = 8    # HOG pixels per cell
@@ -491,7 +458,6 @@ y_start_stop = [300, 700]   # Min and max in y to search in slide_window()
 
 load_model = True
 
-# 训练模型
 if load_model:
     with open('model', 'rb') as f:
         svc = pickle.load(f)
@@ -500,8 +466,6 @@ if load_model:
         X_scaler = pickle.load(s)
     print('X_scaler loaded')
 else:
-    # 提取特征
-    #print('正在提取车辆的特征...')
     t1 = time.time()
     car_features = extract_features(cars, color__space=color_space,
                                     spatial__size=spatial_size, hist__bins=hist_bins,
@@ -510,9 +474,6 @@ else:
                                     hog__channel=hog_channel, spatial__feat=spatial_feat,
                                     hist__feat=hist_feat, hog__feat=hog_feat)
     t2 = time.time()
-    #print('提取完成！用时{}秒'.format(round(t2 - t1, 2)))
-
-    #print('正在提取非车辆的特征...')
     t1 = time.time()
     notcar_features = extract_features(notcars, color__space=color_space,
                                        spatial__size=spatial_size, hist__bins=hist_bins,
@@ -521,13 +482,12 @@ else:
                                        hog__channel=hog_channel, spatial__feat=spatial_feat,
                                        hist__feat=hist_feat, hog__feat=hog_feat)
     t2 = time.time()
-    #print('提取完成！用时{}秒'.format(round(t2 - t1, 2)))
 
     X = np.vstack((car_features, notcar_features)).astype(np.float64)
 
     # Fit a per-column scaler
     X_scaler = StandardScaler().fit(X)
-    # 保存 scaler
+    # scaler
     with open('scaler', 'wb') as s:
         pickle.dump(X_scaler, s)
 
@@ -556,40 +516,10 @@ else:
     print(round(t2 - t, 2), 'Seconds to train SVC...')
     # Check the score of the SVC
     print('Test Accuracy of SVC = ', round(svc.score(X_test, y_test), 4))
-    # 保存训练模型
     with open('model', 'wb') as f:
         pickle.dump(svc, f)
 
-# 单张图片测试
-# 法一：
-# test_features_1 = extract_features(not_car_filename[2000:2001], color__space=color_space,
-#                                 spatial__size=spatial_size, hist__bins=hist_bins,
-#                                 orient_=orient, pix_per__cell=pix_per_cell,
-#                                 cell_per__block=cell_per_block,
-#                                 hog__channel=hog_channel, spatial__feat=spatial_feat,
-#                                 hist__feat=hist_feat, hog__feat=hog_feat)
-# scaled_test_x = X_scaler.transform(test_features_1)
-# res = svc.predict(scaled_test_x)
-# print(res)
-
-# 法二：
-# test_features_2 = [
-#     single_img_features(cv2.imread(car_filename[2000]), color__space=color_space, spatial__size=spatial_size,
-#                         hist__bins=hist_bins, hist__range=(0, 256), orient_=orient,
-#                         pix_per__cell=pix_per_cell, cell_per__block=cell_per_block, hog__channel=hog_channel,
-#                         spatial__feat=spatial_feat, hist__feat=hist_feat, hog__feat=hog_feat)]
-# scaled_test_x = X_scaler.transform(test_features_2)
-# res = svc.predict(scaled_test_x)ce330c19-634e9a62.jpg
-# print(res)
-
 test_image = cv2.imread('test7.jpg')
-# orig_shape = test_image.shape   # 原图的 shape, 用于还原原图的大小
-#
-# lane_image = cv2.resize(test_image, (960, 540), interpolation=cv2.INTER_CUBIC)
-# # 画车道线
-# lane_image = process_an_image(lane_image)
-# # 还原大小
-# lane_image = cv2.resize(lane_image, (orig_shape[1], orig_shape[0]), interpolation=cv2.INTER_CUBIC)
 
 windows = choose_window_size(test_image, x_start_stop=None, y_start__stop=y_start_stop, overlap=(0.6, 0.7))
 box = search_windows(test_image, windows, svc, X_scaler, color__space=color_space, spatial__size=spatial_size, hist__bins=hist_bins,
