@@ -43,7 +43,7 @@ int main(int argc, char** argv){
 
 	char PcdFileName[1000];
 
-	ros::init (argc, argv, "lidar_data_processing");
+	ros::init (argc, argv, "lidar_data_processing_node");
 
 	ros::NodeHandle nh;
 	ros::Publisher pub = nh.advertise<PointCloud> ("pointcloud", 1);  					//원본 포인트 클라우드 publisher 생성

@@ -18,11 +18,11 @@ int main (int argc, char** argv)
 
 	}
 
-	//test_pcd.pcd이름으로 저장 
+	//test_pcd_1.pcd이름으로 저장 
 	pcl::io::savePCDFileASCII ("/home/user/pcl_test/src/test_pcd_1.pcd", cloud);
 
 	//정보 출력 
-	std::cerr << "Saved " << cloud.points.size () << " data points to test_pcd.pcd." << std::endl;
+	std::cerr << "Saved " << cloud.points.size () << " data points to test_pcd_1.pcd." << std::endl;
 
 	for (std::size_t i = 0; i < cloud.points.size (); ++i)
 		std::cerr << "    " << cloud.points[i].x << " " << cloud.points[i].y << " " << cloud.points[i].z << std::endl;
