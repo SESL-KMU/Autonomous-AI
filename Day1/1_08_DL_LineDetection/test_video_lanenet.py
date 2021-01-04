@@ -71,8 +71,8 @@ def test_lanenet(weights_path, video_path):
 
     cap = cv2.VideoCapture(video_path)
 
-    fourcc = cv2.VideoWriter_fourcc(*'DIVX')
-    out = cv2.VideoWriter('output_test_0530.mp4', fourcc, 25.0, (640, 480))
+    # fourcc = cv2.VideoWriter_fourcc(*'DIVX')
+    # out = cv2.VideoWriter('output_test_0530.mp4', fourcc, 25.0, (640, 480))
     with sess.as_default():
         saver.restore(sess=sess, save_path=weights_path)
 
@@ -118,7 +118,7 @@ def test_lanenet(weights_path, video_path):
                 # result = cv2.add(mask_image, image_vis)
                 # cv2.imshow('result', result)
 
-                out.write(image_vis)
+                # out.write(image_vis)
 
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
@@ -127,7 +127,7 @@ def test_lanenet(weights_path, video_path):
 
     sess.close()
     cap.release()
-    out.release()
+    # out.release()
     cv2.destroyAllWindows()
 
     return
