@@ -9,8 +9,7 @@ MESSAGE (STATUS ${CMAKE_PROJECT_NAME}) #( [<Type>] <메시지> )
 SET(COMPILE_FLAGS "-std=c++11") 
 
 # 의존성 패키지
-FIND_PACKAGE (PCL 1.2 REQUIRED)  # 프로그램 실행시 필요한 패키지
-                                # 없을 경우 에러 발생 
+FIND_PACKAGE (PCL 1.7 REQUIRED)  # 프로그램 실행시 필요한 패키지
 
 # 헤더 디렉토리 지정 (-I)
 INCLUDE_DIRECTORIES(
