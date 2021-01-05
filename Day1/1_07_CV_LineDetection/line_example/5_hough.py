@@ -1,30 +1,28 @@
-import cv2  # opencv 사용
+import cv2  # opencv
 import numpy as np
 
-def region_of_interest(img, vertices, color3=(255, 255, 255), color1=255):  # ROI 셋팅
+def region_of_interest(img, vertices, color3=(255, 255, 255), color1=255):  # ROI
 
-    mask = np.zeros_like(img)  # mask = img와 같은 크기의 빈 이미지
+    mask = np.zeros_like(img)
 
-    if len(img.shape) > 2:  # Color 이미지(3채널)라면 :
+    if len(img.shape) > 2:
         color = color3
-    else:  # 흑백 이미지(1채널)라면 :
+    else:
         color = color1
 
-    # vertices에 정한 점들로 이뤄진 다각형부분(ROI 설정부분)을 color로 채움
     cv2.fillPoly(mask, vertices, color)
 
-    # 이미지와 color로 채워진 ROI를 합침
     ROI_image = cv2.bitwise_and(img, mask)
     return ROI_image
 
 
-def draw_lines(img, lines, color=[0, 0, 255], thickness=2):  # 선 그리기
+def draw_lines(img, lines, color=[0, 0, 255], thickness=2):
     for line in lines:
         for x1, y1, x2, y2 in line:
             cv2.line(img, (x1, y1), (x2, y2), color, thickness)
 
 
-def hough_lines(img, rho, theta, threshold, min_line_len, max_line_gap):  # 허프 변환
+def hough_lines(img, rho, theta, threshold, min_line_len, max_line_gap):
     lines = cv2.HoughLinesP(img, rho, theta, threshold, np.array([]), minLineLength=min_line_len,
                             maxLineGap=max_line_gap)
     line_img = np.zeros((img.shape[0], img.shape[1], 3), dtype=np.uint8)
@@ -33,27 +31,27 @@ def hough_lines(img, rho, theta, threshold, min_line_len, max_line_gap):  # 허프
     return line_img
 
 
-def weighted_img(img, initial_img, α=1, β=1., λ=0.):  # 두 이미지 operlap 하기
-    return cv2.addWeighted(initial_img, α, img, β, λ)
+def weighted_img(img, initial_img, aa=1, bb=1., cc=0.):
+    return cv2.addWeighted(initial_img, aa, img, bb, cc)
 
 
-image = cv2.imread('road.png')  # 이미지 읽기
-height, width = image.shape[:2]  # 이미지 높이, 너비
+image = cv2.imread('road.png')
+height, width = image.shape[:2]
 
 kernel_size = 3
 low_threshold = 70
 high_threshold = 210
-gray_img = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)  # 흑백이미지로 변환
-blur_img = cv2.GaussianBlur(image, (kernel_size, kernel_size), 0)  # Blur 효과
-canny_img = cv2.Canny(blur_img, low_threshold, high_threshold)  # Canny edge 알고리즘
+gray_img = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+blur_img = cv2.GaussianBlur(image, (kernel_size, kernel_size), 0)  # Blur
+canny_img = cv2.Canny(blur_img, low_threshold, high_threshold)  # Canny edge
 
 vertices = np.array(
     [[(0, height), (width / 2 - 70, height / 2 + 0), (width / 2 + 70, height / 2 + 0), (width - 0, height)]],
     dtype=np.int32)
-ROI_img = region_of_interest(canny_img, vertices)  # ROI 설정
+ROI_img = region_of_interest(canny_img, vertices)  # ROI
 
-hough_img = hough_lines(ROI_img, 1, 1 * np.pi / 180, 30, 10, 20)  # 허프 변환
+hough_img = hough_lines(ROI_img, 1, 1 * np.pi / 180, 30, 10, 20)
 
-result = weighted_img(hough_img, image)  # 원본 이미지에 검출된 선 overlap
-cv2.imshow('result', result)  # 결과 이미지 출력
+result = weighted_img(hough_img, image)  # overlap
+cv2.imshow('result', result)
 cv2.waitKey(0)
