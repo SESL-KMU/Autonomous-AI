@@ -73,12 +73,12 @@ def kalman(gps_data, yaws, yawrates, forward_velocities):
         [0., 0., initial_yaw_std ** 2.]
     ])
 
-    Q = np.array([
+    R = np.array([
         [xy_obs_noise_std ** 2., 0.],
         [0., xy_obs_noise_std ** 2.]
     ], dtype=np.float)
 
-    R = np.array([
+    Q = np.array([
         [forward_velocity_noise_std ** 2., 0., 0.],
         [0., forward_velocity_noise_std ** 2., 0.],
         [0., 0., yaw_rate_noise_std ** 2.]
@@ -107,7 +107,7 @@ def kalman(gps_data, yaws, yawrates, forward_velocities):
         ])
 
         # propagate!
-        kf.propagate(u, dt, R)
+        kf.propagate(u, dt, Q)
 
         # get measurement `z = [x, y] + noise`
         z = np.array([
@@ -116,7 +116,7 @@ def kalman(gps_data, yaws, yawrates, forward_velocities):
         ], dtype=np.float)
 
         # update!
-        kf.update(z, Q)
+        kf.update(z, R)
 
         # save estimated state to analyze later
         mu_x.append(kf.x[0])

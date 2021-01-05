@@ -8,26 +8,7 @@ class ExtendedKalmanFilter:
         self.x = x
         self.P = P
 
-    def update(self, z, Q):
-
-        # compute Kalman gain
-        H = np.array([
-            [1., 0., 0.],
-            [0., 1., 0.]
-        ])  # Jacobian of observation function
-        H = H.astype(np.float)
-
-        K = self.P @ H.T @ np.linalg.inv(H @ self.P @ H.T + Q)
-
-        # update state x
-        x, y, theta = self.x
-        z_ = np.array([x, y])  # expected observation from the estimated state
-        self.x = self.x + K @ (z - z_)
-
-        # update covariance P
-        self.P = self.P - K @ H @ self.P
-
-    def propagate(self, u, dt, R):
+    def propagate(self, u, dt, Q):
 
         # propagate state x
         x, y, theta = self.x
@@ -47,4 +28,25 @@ class ExtendedKalmanFilter:
             [0., 0., 1.]
         ])  # Jacobian of state transition function
 
-        self.P = G @ self.P @ G.T + R
+        self.P = G @ self.P @ G.T + Q
+
+    def update(self, z, R):
+
+        # compute Kalman gain
+        H = np.array([
+            [1., 0., 0.],
+            [0., 1., 0.]
+        ])  # Jacobian of observation function
+        H = H.astype(np.float)
+
+        K = self.P @ H.T @ np.linalg.inv(H @ self.P @ H.T + R)
+
+        # update state x
+        x, y, theta = self.x
+        z_ = np.array([x, y])  # expected observation from the estimated state
+        self.x = self.x + K @ (z - z_)
+
+        # update covariance P
+        self.P = self.P - K @ H @ self.P
+
+
