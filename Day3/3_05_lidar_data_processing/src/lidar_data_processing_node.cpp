@@ -96,7 +96,7 @@ int main(int argc, char** argv){
 
 
 /********************************************************************************************/
-
+		msg_marker.markers.clear();
 		ros::spinOnce ();
 		loop_rate.sleep ();
 		
@@ -227,6 +227,7 @@ pcl::PointCloud<pcl::PointXYZI> Clustering(PointCloud::Ptr cloud){
 		//box_marker = Box(box_points);
 		//box_marker.id = k;
 		//msg_marker.markers.push_back(box_marker);
+		//box_marker.points.clear();
 
 		k++;
 	}
