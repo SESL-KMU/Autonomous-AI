@@ -69,6 +69,11 @@ int main(int argc, char** argv){
 		pcl::PointCloud<pcl::PointXYZI> cloud_ec;  		//군집화 클라우드 데이터
 
 /********************************************main********************************************/
+
+		sprintf(PcdFileName,"/home/user/catkin_ws/src/lidar_data_processing/Data_pcd/pcd_%d.pcd",j++);
+		pcl::io::loadPCDFile<pcl::PointXYZ> (PcdFileName, *cloud);  //pcd파일이 변경될 때마다 새로운 cloud 생성
+		cout<<j<<endl;
+
 		//cloud_filter = RoI_Filtering(cloud);
 		//cloud_RANSAC = RANSAC(cloud_filter);
 		//cloud_ec = Clustering(cloud_RANSAC);
