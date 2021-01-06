@@ -69,16 +69,28 @@ int main(int argc, char** argv){
 		pcl::PointCloud<pcl::PointXYZI> cloud_ec;  		//군집화 클라우드 데이터
 
 /********************************************main********************************************/
+		//cloud_filter = RoI_Filtering(cloud);
+		//cloud_RANSAC = RANSAC(cloud_filter);
+		//cloud_ec = Clustering(cloud_RANSAC);
+		
+		//msg = Message(cloud);				//원본 클라우드 데이터 msg
+		//msg_filter = Message(cloud_filter);		//필터링 결과 클라우드 데이터 msg
+		//msg_RANSAC = Message(cloud_RANSAC);		//RANSAC 알고리즘 결과 클라우드 데이터 msg
 
+		//pcl::PCLPointCloud2 cloud_p;
+		//pcl::toPCLPointCloud2(cloud_ec, cloud_p);
+		//sensor_msgs::PointCloud2 output;
+		//pcl_conversions::fromPCL(cloud_p, output);
+		//output.header.frame_id = "map";			//Clustering 결과 msg (ROS Message Type으로 변환)
 
-
-
-
+		//pub.publish (msg);
+		//pub_filter.publish (msg_filter);
+		//pub_RANSAC.publish (msg_RANSAC);
+		//pub_ec.publish (output);
+		//pub_marker.publish(msg_marker);			//각 msg publish
 
 
 /********************************************************************************************/
-
-
 
 		ros::spinOnce ();
 		loop_rate.sleep ();
@@ -193,8 +205,8 @@ pcl::PointCloud<pcl::PointXYZI> Clustering(PointCloud::Ptr cloud){
 
 	for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin(); it != cluster_indices.end(); ++it){
 		
-		PointCloud::Ptr box_points (new PointCloud);
-
+		//PointCloud::Ptr box_points (new PointCloud);
+		//visualization_msgs::Marker box_marker;
 		
 		for (std::vector<int>::const_iterator pit = it->indices.begin(); pit != it->indices.end(); ++pit){
 
@@ -203,9 +215,14 @@ pcl::PointCloud<pcl::PointXYZI> Clustering(PointCloud::Ptr cloud){
 			pt2.x = pt.x, pt2.y = pt.y, pt2.z = pt.z;
 			pt2.intensity = (float)(k + 1);
 
+			//box_points->points.push_back(pcl::PointXYZ(pt2.x, pt2.y, pt2.z));
 			TotalCloud.push_back(pt2);
 		      }
 		
+		//box_marker = Box(box_points);
+		//box_marker.id = k;
+		//msg_marker.markers.push_back(box_marker);
+
 		k++;
 	}
 
