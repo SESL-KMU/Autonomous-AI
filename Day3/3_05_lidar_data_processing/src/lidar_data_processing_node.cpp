@@ -96,7 +96,7 @@ int main(int argc, char** argv){
 
 
 /********************************************************************************************/
-		msg_marker.markers.clear();
+
 		ros::spinOnce ();
 		loop_rate.sleep ();
 		
@@ -206,6 +206,7 @@ pcl::PointCloud<pcl::PointXYZI> Clustering(PointCloud::Ptr cloud){
 
 
 	pcl::PointCloud<pcl::PointXYZI> TotalCloud;
+	msg_marker.markers.clear();
 	int k = 0;
 
 	for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin(); it != cluster_indices.end(); ++it){
