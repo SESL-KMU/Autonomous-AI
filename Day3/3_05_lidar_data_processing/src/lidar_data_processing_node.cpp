@@ -280,8 +280,7 @@ visualization_msgs::Marker Box(PointCloud::Ptr box_points){
 
 	if((max_point_OBB.x - min_point_OBB.x < 5) && (max_point_OBB.x - min_point_OBB.x > 1))
 		bbx_marker.scale.x = (max_point_OBB.x - min_point_OBB.x);
-	if((max_point_OBB.y - min_point_OBB.y < 5) && (max_point_OBB.y - min_point_OBB.y > 1))
-		bbx_marker.scale.y = (max_point_OBB.y - min_point_OBB.y);
+	bbx_marker.scale.y = (max_point_OBB.y - min_point_OBB.y);
 	bbx_marker.scale.z = (max_point_OBB.z - min_point_OBB.z);
 
 
