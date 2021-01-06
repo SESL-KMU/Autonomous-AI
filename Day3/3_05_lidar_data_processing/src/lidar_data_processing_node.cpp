@@ -57,7 +57,7 @@ int main(int argc, char** argv){
 
 	while (nh.ok())
 	{
-
+		msg_marker.markers.clear();
 		PointCloud::Ptr msg (new PointCloud);			//rviz에 전달되는 메세지 초기화
 		PointCloud::Ptr msg_filter (new PointCloud);  		//rviz에 전달되는 filter 메세지 초기화
 		PointCloud::Ptr msg_RANSAC (new PointCloud);  	//rviz에 전달되는 RANSAC 메세지 초기화
@@ -96,7 +96,7 @@ int main(int argc, char** argv){
 
 
 /********************************************************************************************/
-
+		msg_marker.markers.clear();
 		ros::spinOnce ();
 		loop_rate.sleep ();
 		
@@ -147,7 +147,7 @@ PointCloud::Ptr RoI_Filtering(PointCloud::Ptr cloud){
 
 	pass.setInputCloud (cloud_filter);	//입력 
 	pass.setFilterFieldName ("x");		//적용할 좌표 축
-	pass.setFilterLimits (-15, 30);		//적용할 값 (최소, 최대 값)
+	pass.setFilterLimits (-20, 30);		//적용할 값 (최소, 최대 값)
 	pass.filter (*cloud_filter);		//필터 적용 
 
 	return cloud_filter;
@@ -169,8 +169,8 @@ PointCloud::Ptr RANSAC(PointCloud::Ptr cloud){
 	seg.setInputCloud (cloud);			//입력 
 	seg.setModelType (pcl::SACMODEL_PLANE);		//적용 모델 (지면을 제거하기 위한 plane 모델 사용)
 	seg.setMethodType (pcl::SAC_RANSAC);		//Method Type RANSAC 사용
-	seg.setMaxIterations (200);			//최대 실행 수
-	seg.setDistanceThreshold (0.12);		//inlier로 처리할 거리 정보
+	seg.setMaxIterations (300);			//최대 실행 수
+	seg.setDistanceThreshold (0.16);		//inlier로 처리할 거리 정보
 	//seg.setRadiusLimits(0, 0.1);     		// cylinder경우, Set minimum and maximum radii of the cylinder.
 	seg.segment (*inliers, *coefficients);		//세그멘테이션 적용 
 	pcl::copyPointCloud<pcl::PointXYZ>(*cloud, *inliers, *cloud_inliner);  //지면정보 추출
