@@ -100,7 +100,7 @@ int main(int argc, char** argv){
 		ros::spinOnce ();
 		loop_rate.sleep ();
 		
-		if (j>80) j=0;
+		if (j>40) j=0;
 
 	}
 }
