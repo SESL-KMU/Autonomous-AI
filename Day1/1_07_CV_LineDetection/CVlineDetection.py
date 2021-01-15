@@ -7,10 +7,12 @@ import numpy as np
 import cv2
 import random
 import os, sys
+from google.colab.patches import cv2_imshow
 
 input_type = 'video' #'video' # 'image'
 
-cap = cv2.VideoCapture('./test_images/0531_fps_20.mp4')
+# cap = cv2.VideoCapture('./test_images/0531_fps_20.mp4')
+cap = cv2.VideoCapture('../0531_fps_20.mp4')
 fit_result, l_fit_result, r_fit_result, L_lane, R_lane = [], [], [], [], []
 
 # Define the codec and create VideoWriter object
@@ -280,7 +282,7 @@ if __name__ == '__main__':
             frame = cv2.resize(frame, None, fx=3 / 4, fy=3 / 4, interpolation=cv2.INTER_AREA)
         result = detect_lanes_img(frame)
 
-        cv2.imshow('result', result)
+        cv2_imshow(result)
         cv2.waitKey(0)
 
     elif input_type == 'video':
@@ -290,11 +292,11 @@ if __name__ == '__main__':
                 # result, left, right = detect_lanes_img(frame)
                 try:
                     result, left, right = detect_lanes_img(frame)
-                    cv2.imshow('result', result)
+                    cv2_imshow(result)
                 except:
                     continue
 
-                cv2.imshow('result', result)
+                # cv2_imshow(result)
 
                 # out.write(frame)
 
