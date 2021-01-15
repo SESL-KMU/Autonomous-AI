@@ -9,12 +9,11 @@ rectangle = False
 trackWindow = None
 RoI_hist = None
 
-
 def onMouse(event, x, y, flags, param):
     global col, width, row, height, frame, frame2, inputmode
     global rectangle, RoI_hist, trackWindow
 
-    if inputmode:
+    if inputmode: #inputmode가 ON일떄 작동 (camShift코드에서 'i'버튼을 누르면 실행)
         if event == cv2.EVENT_LBUTTONDOWN:
             rectangle = True
             col, row = x, y
@@ -35,19 +34,19 @@ def onMouse(event, x, y, flags, param):
 
             RoI = frame[row:row+height, col:col + width]
             RoI = cv2.cvtColor(RoI, cv2.COLOR_BGR2HSV)
-            RoI_hist = cv2.calcHist([RoI], [0], None, [180], [0,180])
+            RoI_hist = cv2.calcHist([RoI], [0], None, [256], [0,256])
 
             cv2.normalize(RoI_hist, RoI_hist, 0, 255, cv2.NORM_MINMAX)
+            print(trackWindow)
 
     return
-
 
 def camShift():
 
     global frame, frame2, inputmode, trackWindow, RoI_hist
 
     try:
-        cap = cv2.VideoCapture("./sample.mov")
+        cap = cv2.VideoCapture("./videoplayback.mp4")
     except Exception as e:
         print(e)
         return
@@ -62,6 +61,14 @@ def camShift():
     height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
     fourcc = cv2.VideoWriter_fourcc(*'DIVX')
     out = cv2.VideoWriter('./output.avi', fourcc, 30.0, (int(width), int(height)))
+
+    # trackWindow = (356, 119, 357, 524)
+    # RoI = frame[trackWindow[1]:trackWindow[1] + trackWindow[3], trackWindow[0]:trackWindow[0] + trackWindow[2]]
+    # RoI = cv2.cvtColor(RoI, cv2.COLOR_BGR2HSV)
+    # RoI_hist = cv2.calcHist([RoI], [0], None, [180], [0, 180])
+    #
+    # cv2.normalize(RoI_hist, RoI_hist, 0, 255, cv2.NORM_MINMAX)
+
     while True:
 
         ret, frame = cap.read()
@@ -72,7 +79,7 @@ def camShift():
         if trackWindow is not None:
 
             hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-            dst = cv2.calcBackProject([hsv], [0], RoI_hist, [0,180], 1)
+            dst = cv2.calcBackProject([hsv], [0], RoI_hist, [0,256], 1)
             ret, trackWindow = cv2.CamShift(dst, trackWindow, termination)
 
             x, y, w, h = trackWindow
