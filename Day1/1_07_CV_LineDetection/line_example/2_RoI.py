@@ -1,6 +1,6 @@
 import cv2  # opencv 사용
 import numpy as np
-
+from google.colab.patches import cv2_imshow
 
 def region_of_interest(img, vertices, color3=(255, 255, 255), color1=255):  # ROI 셋팅
 
@@ -44,7 +44,7 @@ roi_img = region_of_interest(image, vertices)  # vertices에 정한 점들 기�
 mark = np.copy(roi_img)  # roi_img 복사
 mark = mark_img(roi_img)  # 흰색 차선 찾기
 
-cv2.imshow('roi_white', mark)  # 흰색 차선 추출 결과 출력
-# cv2.imshow('roi_img', roi_img)  # 흰색 차선 추출 결과 출력
-cv2.imshow('result', image)  # 이미지 출력
+cv2_imshow('roi_white', mark)  # 흰색 차선 추출 결과 출력
+# cv2_imshow('roi_img', roi_img)  # 흰색 차선 추출 결과 출력
+cv2_imshow('result', image)  # 이미지 출력
 cv2.waitKey(0)

@@ -1,5 +1,6 @@
 import cv2 # opencv 사용
 import numpy as np
+from google.colab.patches import cv2_imshow
 image = cv2.imread('road.png') # 이미지 읽기
 mark = np.copy(image) # image 복사
 
@@ -15,6 +16,6 @@ thresholds = (image[:,:,0] < bgr_threshold[0]) \
             | (image[:,:,2] < bgr_threshold[2])
 mark[thresholds] = [0,0,0]
 
-cv2.imshow('white',mark) # 흰색 추출 이미지 출력
-cv2.imshow('result',image) # 이미지 출력
+cv2_imshow('white',mark) # 흰색 추출 이미지 출력
+cv2_imshow('result',image) # 이미지 출력
 cv2.waitKey(0)

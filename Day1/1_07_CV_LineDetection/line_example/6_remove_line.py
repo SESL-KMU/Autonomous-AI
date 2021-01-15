@@ -1,5 +1,6 @@
 import cv2  # opencv
 import numpy as np
+from google.colab.patches import cv2_imshow
 
 
 def region_of_interest(img, vertices, color3=(255, 255, 255), color1=255):  # ROI
@@ -67,5 +68,5 @@ draw_lines(temp, L_lines)
 draw_lines(temp, R_lines)
 
 result = weighted_img(temp, image)
-cv2.imshow('result', result)
+cv2_imshow('result', result)
 cv2.waitKey(0)

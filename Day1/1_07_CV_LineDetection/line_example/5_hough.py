@@ -1,5 +1,6 @@
 import cv2  # opencv
 import numpy as np
+from google.colab.patches import cv2_imshow
 
 def region_of_interest(img, vertices, color3=(255, 255, 255), color1=255):  # ROI
 
@@ -53,5 +54,5 @@ ROI_img = region_of_interest(canny_img, vertices)  # ROI
 hough_img = hough_lines(ROI_img, 1, 1 * np.pi / 180, 30, 10, 20)
 
 result = weighted_img(hough_img, image)  # overlap
-cv2.imshow('result', result)
+cv2_imshow('result', result)
 cv2.waitKey(0)
