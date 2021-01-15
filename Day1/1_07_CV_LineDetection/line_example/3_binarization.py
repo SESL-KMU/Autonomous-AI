@@ -8,8 +8,8 @@ _, otsu = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 adap = cv2.adaptiveThreshold(image, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, 7, 5)
 
 
-cv2_imshow('thres',thres) # 이미지 출력
-cv2_imshow('otsu',otsu) # 이미지 출력
-cv2_imshow('adap',adap) # 이미지 출력
-cv2_imshow('origin',image) # 이미지 출력
+cv2_imshow(thres) # 이미지 출력
+cv2_imshow(otsu) # 이미지 출력
+cv2_imshow(adap) # 이미지 출력
+cv2_imshow(image) # 이미지 출력
 cv2.waitKey(0)

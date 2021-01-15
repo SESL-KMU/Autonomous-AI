@@ -93,5 +93,5 @@ draw_fit_line(temp, left_fit_line)
 draw_fit_line(temp, right_fit_line)
 
 result = weighted_img(temp, image)  # 원본 이미지에 검출된 선 overlap
-cv2_imshow('result', result)  # 결과 이미지 출력
+cv2_imshow(result)  # 결과 이미지 출력
 cv2.waitKey(0)

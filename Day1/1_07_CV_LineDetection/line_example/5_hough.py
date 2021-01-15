@@ -54,5 +54,5 @@ ROI_img = region_of_interest(canny_img, vertices)  # ROI
 hough_img = hough_lines(ROI_img, 1, 1 * np.pi / 180, 30, 10, 20)
 
 result = weighted_img(hough_img, image)  # overlap
-cv2_imshow('result', result)
+cv2_imshow(result)
 cv2.waitKey(0)

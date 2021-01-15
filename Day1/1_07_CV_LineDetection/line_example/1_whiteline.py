@@ -16,6 +16,6 @@ thresholds = (image[:,:,0] < bgr_threshold[0]) \
             | (image[:,:,2] < bgr_threshold[2])
 mark[thresholds] = [0,0,0]
 
-cv2_imshow('white',mark) # 흰색 추출 이미지 출력
-cv2_imshow('result',image) # 이미지 출력
+cv2_imshow(mark) # 흰색 추출 이미지 출력
+cv2_imshow(image) # 이미지 출력
 cv2.waitKey(0)

@@ -44,7 +44,7 @@ roi_img = region_of_interest(image, vertices)  # vertices에 정한 점들 기�
 mark = np.copy(roi_img)  # roi_img 복사
 mark = mark_img(roi_img)  # 흰색 차선 찾기
 
-cv2_imshow('roi_white', mark)  # 흰색 차선 추출 결과 출력
-# cv2_imshow('roi_img', roi_img)  # 흰색 차선 추출 결과 출력
-cv2_imshow('result', image)  # 이미지 출력
+cv2_imshow(mark)  # 흰색 차선 추출 결과 출력
+# cv2_imshow(roi_img)  # 흰색 차선 추출 결과 출력
+cv2_imshow(image)  # 이미지 출력
 cv2.waitKey(0)

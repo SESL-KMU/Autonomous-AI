@@ -68,5 +68,5 @@ draw_lines(temp, L_lines)
 draw_lines(temp, R_lines)
 
 result = weighted_img(temp, image)
-cv2_imshow('result', result)
+cv2_imshow(result)
 cv2.waitKey(0)
