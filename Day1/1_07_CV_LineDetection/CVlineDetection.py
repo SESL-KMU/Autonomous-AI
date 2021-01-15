@@ -16,8 +16,8 @@ cap = cv2.VideoCapture('../0531_fps_20.mp4')
 fit_result, l_fit_result, r_fit_result, L_lane, R_lane = [], [], [], [], []
 
 # Define the codec and create VideoWriter object
-# fourcc = cv2.VideoWriter_fourcc(*'mp4v') # Be sure to use the lower case
-# out = cv2.VideoWriter('output.mp4', fourcc, 20.0, ( 960, 540 ))
+fourcc = cv2.VideoWriter_fourcc(*'mp4v') # Be sure to use the lower case
+out = cv2.VideoWriter('output.mp4', fourcc, 20.0, ( 960, 540 ))
 
 def grayscale(img):
     return cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
@@ -298,7 +298,7 @@ if __name__ == '__main__':
 
                 # cv2_imshow(result)
 
-                # out.write(frame)
+                out.write(frame)
 
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
@@ -306,4 +306,5 @@ if __name__ == '__main__':
                 break
 
         cap.release()
+        out.release()
         cv2.destroyAllWindows()
