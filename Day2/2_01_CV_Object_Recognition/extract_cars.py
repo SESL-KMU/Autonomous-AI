@@ -440,7 +440,6 @@ if load_model:
         X_scaler = pickle.load(s)
     print('X_scaler loaded')
 else:
-
     t1 = time.time()
     car_features = extract_features(cars, color__space=color_space,
                                     spatial__size=spatial_size, hist__bins=hist_bins,
@@ -506,7 +505,7 @@ box = search_windows(test_image, windows, svc, X_scaler, color__space=color_spac
                          hist__feat=hist_feat, hog__feat=hog_feat)
 
 heat_map, labels, drawn_image = draw_labeled_windows(test_image, box, threshold_=1)
-ShowImage('images/image1', drawn_image, 1)
 
 plt.imshow(test_image)
 plt.show()
+ShowImage('images/image1', drawn_image, 1)

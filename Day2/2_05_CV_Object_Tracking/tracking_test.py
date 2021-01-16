@@ -45,7 +45,7 @@ def camShift():
     global frame, frame2, inputmode, trackWindow, RoI_hist
 
     try:
-        cap = cv2.VideoCapture("./motorcycle.mp4")
+        cap = cv2.VideoCapture("./book.mp4")
     except Exception as e:
         print(e)
         return
