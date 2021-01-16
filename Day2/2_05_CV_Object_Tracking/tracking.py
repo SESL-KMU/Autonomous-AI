@@ -38,7 +38,6 @@ def onMouse(event, x, y, flags, param):
 
             cv2.normalize(RoI_hist, RoI_hist, 0, 255, cv2.NORM_MINMAX)
             print(trackWindow)
-
     return
 
 def camShift():
@@ -46,7 +45,7 @@ def camShift():
     global frame, frame2, inputmode, trackWindow, RoI_hist
 
     try:
-        cap = cv2.VideoCapture("./KITTI_data.mp4")
+        cap = cv2.VideoCapture("./motorcycles2.mp4")
     except Exception as e:
         print(e)
         return
