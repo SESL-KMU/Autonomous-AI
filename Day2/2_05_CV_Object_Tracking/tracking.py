@@ -34,7 +34,7 @@ def onMouse(event, x, y, flags, param):
 
             RoI = frame[row:row+height, col:col + width]
             RoI = cv2.cvtColor(RoI, cv2.COLOR_BGR2HSV)
-            RoI_hist = cv2.calcHist([RoI], [0], None, [256], [0,256])
+            RoI_hist = cv2.calcHist([RoI], [0, 1], None, [180, 256], [0, 180, 0, 256])
 
             cv2.normalize(RoI_hist, RoI_hist, 0, 255, cv2.NORM_MINMAX)
             print(trackWindow)
@@ -46,7 +46,7 @@ def camShift():
     global frame, frame2, inputmode, trackWindow, RoI_hist
 
     try:
-        cap = cv2.VideoCapture("./videoplayback.mp4")
+        cap = cv2.VideoCapture("./KITTI_data.mp4")
     except Exception as e:
         print(e)
         return
@@ -79,7 +79,7 @@ def camShift():
         if trackWindow is not None:
 
             hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-            dst = cv2.calcBackProject([hsv], [0], RoI_hist, [0,256], 1)
+            dst = cv2.calcBackProject([hsv], [0, 1], RoI_hist, [0,180, 0, 256], 1)
             ret, trackWindow = cv2.CamShift(dst, trackWindow, termination)
 
             x, y, w, h = trackWindow
