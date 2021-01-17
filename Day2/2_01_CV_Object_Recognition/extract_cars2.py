@@ -233,7 +233,6 @@ def choose_window_size(img, x_start_stop=None, y_start__stop=None, overlap=(0.8,
         rate += 1
     return window_list[0] + window_list[1] + window_list[2] + window_list[3]
 
-
 def search_windows(img, windows_list, clf, scaler, color__space='RGB', spatial__size=(32, 32), hist__bins=32,
                    hist__range=(0, 256), orient_=9,
                    pix_per__cell=8, cell_per__block=2,
@@ -295,8 +294,6 @@ def apply_threshold(heatmap, threshold_):
     heatmap[heatmap < threshold_] = 0
 
     return heatmap
-
-
 
 def draw_labeled_bboxes(img, labels_):
     for car_number in range(1, labels_[1] + 1):
