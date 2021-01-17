@@ -22,7 +22,7 @@ from lanenet_model import lanenet
 from lanenet_model import lanenet_postprocess
 from local_utils.config_utils import parse_config_utils
 from local_utils.log_util import init_logger
-
+from google.colab.patches import cv2_imshow
 
 CFG = parse_config_utils.lanenet_cfg
 LOG = init_logger.get_logger(log_file_name_prefix='lanenet_test')
@@ -105,7 +105,7 @@ def test_lanenet(weights_path, video_path):
 
                 image_vis = cv2.resize(image_vis,(640, 480))
                 # cv2.imshow('mask_image', mask_image)
-                cv2.imshow('src_image', image_vis)
+                cv2_imshow(image_vis)
                 # cv2.imshow('instance_image', embedding_image)
                 # cv2.imshow('binary_image', binary_seg_image[0] * 255)
 
