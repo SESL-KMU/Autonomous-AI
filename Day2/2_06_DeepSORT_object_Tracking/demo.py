@@ -65,7 +65,7 @@ def main(yolo):
             w = int(video_capture.get(3))
             h = int(video_capture.get(4))
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        out = cv2.VideoWriter('result/tracking_'+names+'.avi', fourcc, 30, (w, h))
+        out = cv2.VideoWriter('video_masked.avi', fourcc, 30, (w, h))
         frame_index = -1
 
     fps = 0.0
