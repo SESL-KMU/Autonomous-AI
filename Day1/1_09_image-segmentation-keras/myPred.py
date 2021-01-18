@@ -1,7 +1,7 @@
 from keras_segmentation.models.unet import vgg_unet
 
 model = vgg_unet(n_classes=3,  input_height=192, input_width=320  )
-model.load_weights('./checkpoints/7000/7000.12')
+model.load_weights('./checkpoints/70000/70000.6')
 
 import cv2
 from google.colab.patches import cv2_imshow
