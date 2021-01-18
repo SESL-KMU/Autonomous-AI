@@ -1,12 +1,12 @@
 from keras_segmentation.models.unet import vgg_unet
 
 model = vgg_unet(n_classes=3,  input_height=192, input_width=320  )
-model.load_weights('./checkpoints/7000/7000.12')
+model.load_weights('./checkpoints/70000/70000.6')
 
 model.train(
     train_images =  "./data/train_/",
     train_annotations = "./data/train_aug_/",
-    checkpoints_path = "./checkpoints/70000/70000" , epochs=30
+    checkpoints_path = "./checkpoints/70000/70000" , epochs=10
 )
 import cv2
 
