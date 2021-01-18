@@ -6,7 +6,7 @@ import glob
 from sklearn.svm import LinearSVC
 import time
 import pickle
-
+from google.colab.patches import cv2_imshow
 
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
@@ -23,94 +23,6 @@ theta = np.pi / 180
 threshold = 15
 min_line_len = 40
 max_line_gap = 20
-
-def process_an_image(image):
-    image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    image_blur = cv2.GaussianBlur(image_gray, (blur_ksize, blur_ksize), 1)
-    edges = cv2.Canny(image_blur, canny_min, canny_max)
-    points = np.array([[(200, 500), (420, 350), (590, 350), (800, 500)]])
-    roi_edges = roi_mask(edges, points)
-
-    drawing, lines = hough_lines(roi_edges, rho, theta, threshold, min_line_len, max_line_gap)
-    draw_lines(image, lines)
-
-    draw_lanes(drawing, lines)
-
-    result = cv2.addWeighted(image, 0.9, drawing, 0.2, 0)
-
-    return result
-
-
-def draw_lanes(image, lines):
-    left_lines, right_lines = [], []
-    for line in lines:
-        for x1, y1, x2, y2 in line:
-            k = (y2 - y1) / (x2 - x1)
-            if k < 0:
-                left_lines.append(line)
-            else:
-                right_lines.append(line)
-    if len(left_lines) <= 0 or len(right_lines) <= 0:
-        return
-
-    clean_lines(left_lines, 0.1)
-    clean_lines(right_lines, 0.1)
-
-    left_points = [(x1, y1) for line in left_lines for x1, y1, x2, y2 in line]
-    left_points = left_points + [(x2, y2) for line in left_lines for x1, y1, x2, y2 in line]
-    right_points = [(x1, y1) for line in right_lines for x1, y1, x2, y2 in line]
-    right_points = right_points + [(x2, y2) for line in right_lines for x1, y1, x2, y2 in line]
-
-    left_results = least_squares_fit(left_points, 325, image.shape[0])
-    right_results = least_squares_fit(right_points, 325, image.shape[0])
-
-    vtxs = np.array([[left_results[1], left_results[0], right_results[0], right_results[1]]])
-
-    cv2.fillPoly(image, vtxs, (0, 255, 0))
-
-def clean_lines(lines, threshold_):
-    slope = [(y2 - y1) / (x2 - x1) for line in lines for x1, y1, x2, y2 in line]
-    while len(lines) > 0:
-        mean = np.mean(slope)
-        diff = [abs(ss - mean) for ss in slope]
-        idx = np.argmax(diff)
-        if diff[idx] > threshold_:
-            slope.pop(idx)
-            lines.pop(idx)
-        else:
-            break
-
-def least_squares_fit(point_list, ymin, ymax):
-    x = [p[0] for p in point_list]
-    y_ = [p[1] for p in point_list]
-
-    fit = np.polyfit(y_, x, 1)
-    fit_fn = np.poly1d(fit)
-
-    xmin = int(fit_fn(ymin))
-    xmax = int(fit_fn(ymax))
-
-    return [(xmin, ymin), (xmax, ymax)]
-
-
-def hough_lines(image_gray, rho_, theta_, thresh, min_line_len_, max_line_gap_):
-    lines = cv2.HoughLinesP(image_gray, rho_, theta_, thresh, minLineLength=min_line_len_, maxLineGap=max_line_gap_)
-
-    drawing = np.ones((image_gray.shape[0], image_gray.shape[1], 3), dtype=np.uint8)
-    return drawing, lines
-
-
-def draw_lines(image_bgr, lines):
-    for line in lines:
-        for x1, y1, x2, y2 in line:
-            cv2.line(image_bgr, (x1, y1), (x2, y2), [0, 0, 255], 1)
-
-
-def roi_mask(image, corner_points):
-    mask = np.zeros_like(image)
-    cv2.fillPoly(mask, corner_points, 255)
-    img_masked = cv2.bitwise_and(image, mask)
-    return img_masked
 
 def ShowImage(name_of_image, image_, rate):
     img_min = cv2.resize(image_, None, fx=rate, fy=rate, interpolation=cv2.INTER_CUBIC)
@@ -322,7 +234,6 @@ def choose_window_size(img, x_start_stop=None, y_start__stop=None, overlap=(0.8,
         rate += 1
     return window_list[0] + window_list[1] + window_list[2] + window_list[3]
 
-
 def search_windows(img, windows_list, clf, scaler, color__space='RGB', spatial__size=(32, 32), hist__bins=32,
                    hist__range=(0, 256), orient_=9,
                    pix_per__cell=8, cell_per__block=2,
@@ -384,8 +295,6 @@ def apply_threshold(heatmap, threshold_):
     heatmap[heatmap < threshold_] = 0
 
     return heatmap
-
-
 
 def draw_labeled_bboxes(img, labels_):
     for car_number in range(1, labels_[1] + 1):
@@ -507,6 +416,6 @@ box = search_windows(test_image, windows, svc, X_scaler, color__space=color_spac
 
 heat_map, labels, drawn_image = draw_labeled_windows(test_image, box, threshold_=1)
 
-plt.imshow(test_image)
-plt.show()
+cv2.imshow('image', test_image)
+#cv2.imshow()
 ShowImage('images/image1', drawn_image, 1)
