@@ -1,0 +1,26 @@
+*ROS 및 PCL 실습*
+git clone https://github.com/SESL KMU/Autonomous AI.git
+
+catkin_create_pkg ROS_Example roscpp
+catkin_create_pkg pub_sub_example std_msgs roscpp actionlib actionlib_msgs
+
+roscore
+dev
+rosrun pub_sub_example Subscriber
+rosrun pub_sub_example Publisher
+roslaunch pub_sub_example pub sub.launch
+
+catkin_create_pkg pcl_test pcl_conversions pcl_ros roscpp sensor_msgs
+
+roscore
+dev
+rosrun pcl_test pcl_test_node
+rosrun rviz rviz
+
+*Kitti 라이다 데이터 시각화 실습*
+catkin_create_pkg lidar_data_processing pcl_conversions pcl_ros roscpp sensor_msgs
+
+roscore
+dev
+rosrun lidar_data_processing lidar_data_processing_node
+rosrun rviz rviz
