@@ -1,5 +1,5 @@
 *ROS 및 PCL 실습*
-git clone https://github.com/SESL KMU/Autonomous AI.git
+git clone https://github.com/SESL-KMU/Autonomous-AI.git
 
 catkin_create_pkg ROS_Example roscpp
 catkin_create_pkg pub_sub_example std_msgs roscpp actionlib actionlib_msgs
