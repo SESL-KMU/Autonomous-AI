@@ -1,0 +1,69 @@
+*26p*
+@"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+
+*27p*
+choco
+choco upgrade git -y
+
+*28p*
+git --version
+mkdir C:\opt\chocolatey
+set ChocolateyInstall = C:\opt\chocolatey
+choco source add -n=ros-win -s="https://aka.ms/ros/public" --priority=1
+choco upgrade ros-noetic-desktop_full -y --execution-timeout=0
+
+*30p*
+uuidgen
+
+*32p*
+C:\Windows\System32\cmd.exe /k "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\Tools\VsDevCmd.bat" -arch=amd64 -host_arch=amd64&& set ChocolateyInstall=C:\opt\chocolatey&& C:\opt\ros\noetic\x64\setup.bat
+
+*39p*
+{
+	"commandline": "C:\\Windows\\System32\\cmd.exe /k \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\Tools\\VsDevCmd.bat\" -arch=amd64 -host_arch=amd64 && set ChocolateyInstall=c:\\opt\\chocolatey&& c:\\opt\\ros\\noetic\\x64\\setup.bat",
+	"guid": "{앞서 복사해둔 uuid}",
+	"icon": "ms-appx:///ProfileIcons/{0caa0dad-35be-5f56-a8ff-afceeeaa6101}.png",
+	"name": "ROS Noetic",
+	"startingDirectory": "C:\\ws"
+},
+
+*41p*
+set ChocolateyInstall = C:\opt\chocolatey
+choco upgrade all -y --execution-timeout=0
+
+*42p*
+cd C:\
+mkdir catkin_ws
+cd catkin_ws
+mkdir src
+cd src
+catkin_init_workspace
+
+*45p*
+roscore
+
+*46p*
+@echo off
+
+doskey ls = dir
+doskey cw = cd C:\catkin_ws
+doskey cm = catkin_make
+doskey cs = cd C:\catkin_ws\src
+doskey dev = "C:\catkin_ws\devel\setup.bat"
+
+*49p*
+&& C:\catkin_ws\ros_aliaes.cmd
+
+*57p*
+git clone https://github.com/microsoft/vcpkg.git
+cd vcpkg
+.\bootstrap-vcpkg.bat
+
+*58p*
+.\vcpkg install boost:x64-windows
+
+*59p*
+.\vcpkg install flann:x64-windows
+
+*60p*
+.\vcpkg install pcl
