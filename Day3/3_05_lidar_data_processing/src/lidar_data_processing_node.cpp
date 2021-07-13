@@ -159,8 +159,8 @@ PointCloud::Ptr RoI_Filtering(PointCloud::Ptr cloud) {
 PointCloud::Ptr RANSAC(PointCloud::Ptr cloud) {
 
 	pcl::SACSegmentation<pcl::PointXYZ> seg;  							//RANSAC 적용을 위한 객체 생성
-	PointCloud::Ptr cloud_inliner(new PointCloud);  	//지면 정보 클라우드 데이터
-	PointCloud::Ptr cloud_inliner_neg(new PointCloud);  	//지면 제거 클라우드 데이터
+	PointCloud::Ptr cloud_inlier(new PointCloud);  	//지면 정보 클라우드 데이터
+	PointCloud::Ptr cloud_inlier_neg(new PointCloud);  	//지면 제거 클라우드 데이터
 	pcl::ModelCoefficients::Ptr coefficients(new pcl::ModelCoefficients());
 	pcl::PointIndices::Ptr inliers(new pcl::PointIndices());					// Object for storing the plane model coefficients.
 
@@ -171,18 +171,18 @@ PointCloud::Ptr RANSAC(PointCloud::Ptr cloud) {
 	seg.setMethodType(pcl::SAC_RANSAC);		//Method Type RANSAC 사용
 	seg.setMaxIterations(300);			//최대 실행 수
 	seg.setDistanceThreshold(0.16);		//inlier로 처리할 거리 정보
-										//seg.setRadiusLimits(0, 0.1);     		// cylinder경우, Set minimum and maximum radii of the cylinder.
+										
 	seg.segment(*inliers, *coefficients);		//세그멘테이션 적용 
-	pcl::copyPointCloud<pcl::PointXYZ>(*cloud, *inliers, *cloud_inliner);  //지면정보 추출
+	pcl::copyPointCloud<pcl::PointXYZ>(*cloud, *inliers, *cloud_inlier);  //지면정보 추출
 
 	pcl::ExtractIndices<pcl::PointXYZ> extract;
 	extract.setInputCloud(cloud);
 	extract.setIndices(inliers);
 	extract.setNegative(true);//false
-	extract.filter(*cloud_inliner_neg);
+	extract.filter(*cloud_inlier_neg);
 
 
-	return cloud_inliner_neg;
+	return cloud_inlier_neg;
 };
 
 
