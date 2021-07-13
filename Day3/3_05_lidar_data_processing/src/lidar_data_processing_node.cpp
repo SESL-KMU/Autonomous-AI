@@ -241,7 +241,6 @@ pcl::PointCloud<pcl::PointXYZI> Clustering(PointCloud::Ptr cloud) {
 
 visualization_msgs::Marker Box(PointCloud::Ptr box_points) {
 	pcl::MomentOfInertiaEstimation<pcl::PointXYZ> feature_extractor;
-	//feature_extractor.setInputCloud(convert_xyz);
 	feature_extractor.setInputCloud(box_points);
 	feature_extractor.compute();
 
