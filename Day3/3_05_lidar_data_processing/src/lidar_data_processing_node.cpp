@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
 		PointCloud::Ptr cloud_RANSAC(new PointCloud);  	//지면 제거 클라우드 데이터
 		pcl::PointCloud<pcl::PointXYZI> cloud_ec;  		//군집화 클라우드 데이터
 
-														/********************************************main********************************************/
+/********************************************main********************************************/
 
 		sprintf(PcdFileName, "C:/catkin_ws/src/lidar_data_processing/Data_pcd/pcd_%d.pcd", j++);
 		pcl::io::loadPCDFile<pcl::PointXYZ>(PcdFileName, *cloud);  //pcd파일이 변경될 때마다 새로운 cloud 생성
@@ -95,12 +95,12 @@ int main(int argc, char** argv) {
 		//pub_marker.publish(msg_marker);			//각 msg publish
 
 
-		/********************************************************************************************/
+/********************************************************************************************/
 		msg_marker.markers.clear();
 		ros::spinOnce();
 		loop_rate.sleep();
 
-		if (j>40) j = 0;
+		if (j>80) j = 0;
 
 	}
 }
@@ -162,12 +162,12 @@ PointCloud::Ptr RANSAC(PointCloud::Ptr cloud) {
 	PointCloud::Ptr cloud_inlier(new PointCloud);  	//지면 정보 클라우드 데이터
 	PointCloud::Ptr cloud_inlier_neg(new PointCloud);  	//지면 제거 클라우드 데이터
 	pcl::ModelCoefficients::Ptr coefficients(new pcl::ModelCoefficients());
-	pcl::PointIndices::Ptr inliers(new pcl::PointIndices());					// Object for storing the plane model coefficients.
+	pcl::PointIndices::Ptr inliers(new pcl::PointIndices());	// Object for storing the plane model coefficients.
 
 
 	seg.setOptimizeCoefficients(true);		// Enable model coefficient refinement (optional).
-	seg.setInputCloud(cloud);			//입력 
-	seg.setModelType(pcl::SACMODEL_PLANE);		//적용 모델 (지면을 제거하기 위한 plane 모델 사용)
+	seg.setInputCloud(cloud);				//입력 
+	seg.setModelType(pcl::SACMODEL_PLANE);	//적용 모델 (지면을 제거하기 위한 plane 모델 사용)
 	seg.setMethodType(pcl::SAC_RANSAC);		//Method Type RANSAC 사용
 	seg.setMaxIterations(300);			//최대 실행 수
 	seg.setDistanceThreshold(0.16);		//inlier로 처리할 거리 정보
@@ -197,7 +197,7 @@ pcl::PointCloud<pcl::PointXYZI> Clustering(PointCloud::Ptr cloud) {
 
 														  // 군집화 오브젝트 생성  
 	pcl::EuclideanClusterExtraction<pcl::PointXYZ> ec;
-	ec.setInputCloud(cloud);       	// 입력   
+	ec.setInputCloud(cloud);       		// 입력   
 	ec.setClusterTolerance(0.7);
 	ec.setMinClusterSize(100);    		// 최소 포인트 수 
 	ec.setMaxClusterSize(6000);  		// 최대 포인트 수
