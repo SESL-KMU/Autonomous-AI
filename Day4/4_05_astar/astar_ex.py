@@ -132,6 +132,10 @@ def main():
     start = (0,0)
     end = (9, 9)
 
+    if maze[start[0]][start[1]] == 1 or maze[end[0]][end[1]] == 1:
+        print("Error occured...")
+        return -1
+
     path = aStar(maze, start, end)
     print("Path:", path, '\n')
 
