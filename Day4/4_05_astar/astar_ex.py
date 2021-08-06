@@ -3,16 +3,13 @@
 # heapque를 이용하면 길을 출력할 때 reverse를 안해도 됨
 
 from astar_aStar import aStar
-from pprint import pprint
+import pprint
 
 # class Node:
 #     def __init__(self, parent=None, position=None):
 #         self.parent = parent
 #         self.position = position
-#
-#         self.g = 0
-#         self.h = 0
-#         self.f = 0
+#         self.g = self.h = self.f = 0
 #
 #     def __eq__(self, other):
 #         return self.position == other.position
@@ -133,19 +130,13 @@ def main():
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
     start = (0,0)
-
-    for i in range(10):
-        for j in range(10):
-            if maze[start[0]][start[1]] == 1:
-                print('error')
-                return 0
-
-    print('normal')
     end = (9, 9)
 
     path = aStar(maze, start, end)
-    print(path)
-    pprint(maze, indent =1, width = 100)
+    print("Path:", path, '\n')
+
+    print("Maze: ")
+    pprint.pprint(maze, indent =1, width = 100)
 
 
 if __name__ == '__main__':
