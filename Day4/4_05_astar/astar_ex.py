@@ -139,9 +139,8 @@ def main():
     path = aStar(maze, start, end)
     print("Path:", path, '\n')
 
-    print("Maze: ")
-    pprint.pprint(maze, indent =1, width = 100)
-
+    print("Maze:")
+    pprint.pprint(maze, indent = 1, width = 100)
 
 if __name__ == '__main__':
     main()

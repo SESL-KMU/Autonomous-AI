@@ -11,9 +11,9 @@ def aStar(maze, start, end):
 
     # openList에 시작 노드 추가
     openList.append(startNode)
+
     # endNode를 찾을 때까지 실행
     while openList:
-
         # 현재 노드 지정
         currentNode = openList[0]
         currentIdx = 0
@@ -34,7 +34,7 @@ def aStar(maze, start, end):
             current = currentNode
             while current is not None:
                 x, y = current.position
-                maze[x][y] = 7
+                maze[y][x] = 7
                 path.append(current.position)
                 current = current.parent
             return path[::-1]  # reverse
@@ -42,7 +42,6 @@ def aStar(maze, start, end):
         children = []
         # 인접한 xy좌표 전부
         for newPosition in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]:
-
             # 노드 위치 업데이트
             nodePosition = (
                 currentNode.position[0] + newPosition[0],  # X
@@ -69,7 +68,6 @@ def aStar(maze, start, end):
 
         # 자식들 모두 loop
         for child in children:
-
             # 자식이 closedList에 있으면 continue
             if child in closedList:
                 continue
