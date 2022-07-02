@@ -302,7 +302,7 @@ if __name__ == '__main__':
             if ret:
                 try:
                     result, left, right = detect_lanes_img(frame)
-                    cv2_imshow(result)
+                    # cv2_imshow(result)
                 except:
                     continue
 
