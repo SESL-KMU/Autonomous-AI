@@ -5,4 +5,4 @@ easydict
 matplotlib
 loguru
 pyyaml
-sklearn
+scikit-learn
